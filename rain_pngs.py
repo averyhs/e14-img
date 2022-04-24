@@ -5,7 +5,7 @@ from scipy import ndimage
 
 # Get all the paths to the image directories (dirs should contain only niftis)
 # TODO: get them all
-file_path = 'Datasets/GAZE_PRF/sub-001_ses-03_anat_sub-001_ses-03_acq-ADNI_run-2_T1w.nii.gz'
+file_path = ''
 
 # Load the nifti image data
 niimg_array = nib.load(file_path).get_fdata()
@@ -17,13 +17,32 @@ if len(niimg_array.shape) == 4:
 # Dimensions of array (num of coronal, axial, sagittal slices)
 cr_dim, ax_dim, sg_dim = niimg_array.shape
 
-# TODO: Implement cut_in_plane function
+def cut_in_plane(plane, cut, arr):
+    '''
+    Cut a nifti image array along a specified plane (axial, coronal, sagittal). Can cut a single slice, or a section. The array must be 3 dimensional.
+
+    args:
+        plane (string): Plane to cut along, must be one of 'ax', 'cr', 'sg'
+        cut (int or tuple of int): index at which to cut or (start, stop) indexes of cut
+        arr (list of float): Niimg array (3D) to be cut
+    
+    returns:
+        cut_arr (list of float): Niimg array cut as specified. Empty array if input is invalid
+    '''
+    cut_arr = np.array([])
+    if plane=='ax':
+        cut_arr = arr[:,cut[0]:cut[1],:] if type(cut) is tuple else arr[:,cut,:]
+    if plane=='cr':
+        cut_arr = arr[cut[0]:cut[1],:,:] if type(cut) is tuple else arr[cut,:,:]
+    if plane=='sg':
+        cut_arr = arr[:,:,cut[0]:cut[1]] if type(cut) is tuple else arr[:,:,cut]
+    return cut_arr
 
 # Select a part in the middle in each direction
 # (which part determined visually on one example)
-ax_arr = niimg_array[:, ax_dim//2 : ax_dim-ax_dim//6, :]
-cr_arr = niimg_array[cr_dim//4 : cr_dim-cr_dim//5, :, :]
-sg_arr = niimg_array[:, :, sg_dim//4 : sg_dim-sg_dim//4]
+ax_arr = cut_in_plane('ax', (ax_dim//2, ax_dim-ax_dim//6), niimg_array)
+cr_arr = cut_in_plane('cr', (cr_dim//4, cr_dim-cr_dim//5), niimg_array)
+sg_arr = cut_in_plane('sg', (sg_dim//4, sg_dim-sg_dim//4), niimg_array)
 
 # Coronal and sagittal images must be rotated
 sg_arr = ndimage.rotate(sg_arr, 90)
