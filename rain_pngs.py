@@ -95,13 +95,13 @@ for cnt, nii_f in enumerate(nii_files, start=1):
     # TODO: Put this in a function for readability
     # Slice em and save em
     for slice in np.linspace(0, min(ax_arr.shape), num=10, dtype=np.uint16, endpoint=False):
-        plt.imsave('Datasets/Axial/ax_{}_{}_{}.png'.format(cnt,slice,subdir), 
+        plt.imsave('Datasets/Axial/ax_{}_{}_{}.png'.format(subdir,cnt,slice), 
             cut_in_plane(axs_dict['ax'], slice, ax_arr), cmap='gray')                    # axial
 
     for slice in np.linspace(0, min(cr_arr.shape), num=10, dtype=np.uint16, endpoint=False):
-        plt.imsave('Datasets/Coronal/cr_{}_{}_{}.png'.format(cnt,slice,subdir), 
+        plt.imsave('Datasets/Coronal/cr_{}_{}_{}.png'.format(subdir,cnt,slice), 
             cut_in_plane(axs_dict['cr'], slice, cr_arr), cmap='gray')                  # coronal
 
     for slice in np.linspace(0, min(sg_arr.shape), num=10, dtype=np.uint16, endpoint=False):
-        plt.imsave('Datasets/Sagittal/sg_{}_{}_{}.png'.format(cnt,slice,subdir), 
+        plt.imsave('Datasets/Sagittal/sg_{}_{}_{}.png'.format(subdir,cnt,slice), 
             cut_in_plane(axs_dict['sg'], slice, sg_arr), cmap='gray')                 # sagittal
